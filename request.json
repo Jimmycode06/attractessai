@@ -1,0 +1,10 @@
+{
+  "model": "gpt-3.5-turbo",
+  "messages": [
+    { "role": "system", "content": "Tu es un assistant." },
+    { "role": "user", "content": "Résumé ceci : Voici un texte test." }
+  ],
+  "temperature": 0.7
+}
+
+

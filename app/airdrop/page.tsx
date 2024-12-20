@@ -7,8 +7,9 @@ import { BackgroundGradient } from "@/components/ui/background-gradient"; // Imp
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [bitcoinPrice, setBitcoinPrice] = useState(null);
+  const [bitcoinPrice, setBitcoinPrice] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState(true); // État pour gérer le mode
+  const [error, setError] = useState<string | null>(null); // État pour gérer les erreurs API
 
   useEffect(() => {
     const fetchBitcoinPrice = async () => {
@@ -16,9 +17,14 @@ export default function Home() {
         const response = await fetch(
           "https://api.coindesk.com/v1/bpi/currentprice/BTC.json"
         );
+        if (!response.ok) {
+          throw new Error("Problème avec la récupération des données.");
+        }
         const data = await response.json();
         setBitcoinPrice(data.bpi.USD.rate); // Récupérer le prix en USD
-      } catch (error) {
+        setError(null); // Réinitialiser l'erreur si la récupération est réussie
+      } catch (error: any) {
+        setError("Erreur lors de la récupération du prix du Bitcoin.");
         console.error(
           "Erreur lors de la récupération du prix du Bitcoin :",
           error
@@ -150,7 +156,9 @@ export default function Home() {
             className="text-lg font-semibold"
             style={{ color: isDarkMode ? "#00b22d" : "#008c1d" }}
           >
-            {bitcoinPrice ? (
+            {error ? (
+              <span className="text-red-500">{error}</span> // Affichage de l'erreur
+            ) : bitcoinPrice ? (
               <span>${bitcoinPrice}</span>
             ) : (
               <span>Chargement du prix...</span>
